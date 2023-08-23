@@ -20,6 +20,16 @@ public class Repository : IRepository
         return _context.Books.AsNoTracking();
     }
 
+    public IQueryable<Employee> GetAllEmployees()
+    {
+        return _context.Employees.AsNoTracking();
+    }
+
+    public IQueryable<Organisation> GetAllOrganisations()
+    {
+       return _context.Organisations.AsNoTracking();
+    }
+
     public IQueryable<Person> GetAllPersons()
     {
         return _context.People.AsNoTracking();
@@ -123,7 +133,7 @@ public class Repository : IRepository
                         }
                         await _context.Database.ExecuteSqlRawAsync(sb1.ToString());
                     }
-                    else
+                    else if (sheetName.ToLower() == "sheet3")
                     {
                         var dt2 = new DataTable();
                         var rowNum2 = 1;
@@ -160,6 +170,84 @@ public class Repository : IRepository
                                $"'{row[1].ToString()}','{row[2].ToString()}')");
                         }
                         await _context.Database.ExecuteSqlRawAsync(sb2.ToString());
+                    }
+                    else if (sheetName.ToLower() == "employee")
+                    {
+                        var empDt = new DataTable();
+                        var empRowNum = 1;
+                        foreach (var row in rows)
+                        {
+                            if (empRowNum == 1)
+                            {
+                                foreach (var cell in row.Cells)
+                                {
+                                    var columnName = cell.Value.ToString();
+                                    empDt.Columns.Add(columnName);
+                                }
+                                empRowNum++;
+                            }
+                            else
+                            {
+
+                                int l = 0;
+                                DataRow dr = empDt.NewRow();
+                                foreach (var cell in row.Cells)
+                                {
+                                    dr[l++] = cell.Value;
+                                    //dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
+                                }
+                                empDt.Rows.Add(dr);
+                            }
+
+                        }
+
+                        var query = new StringBuilder();
+                        foreach (DataRow row in empDt.Rows)
+                        {
+                            query.Append($"INSERT INTO Employees (OrgNumber,FirstName,LastName)values('{row[0].ToString()}'," +
+                               $"'{row[1].ToString()}','{row[2].ToString()}')");
+                        }
+                        await _context.Database.ExecuteSqlRawAsync(query.ToString());
+                    }
+                    else if (sheetName.ToLower() == "organisation")
+                    {
+                        var orgDt = new DataTable();
+                        var orgRowNum = 1;
+                        foreach (var row in rows)
+                        {
+                            if (orgRowNum == 1)
+                            {
+                                foreach (var cell in row.Cells)
+                                {
+                                    var columnName = cell.Value.ToString();
+                                    orgDt.Columns.Add(columnName);
+                                }
+                                orgRowNum++;
+                            }
+                            else
+                            {
+
+                                int m = 0;
+                                DataRow dr = orgDt.NewRow();
+                                foreach (var cell in row.Cells)
+                                {
+                                    dr[m++] = cell.Value;
+                                    //dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
+                                }
+                                orgDt.Rows.Add(dr);
+                            }
+
+                        }
+
+                        var query = new StringBuilder();
+                        foreach (DataRow row in orgDt.Rows)
+                        {
+                            query.Append($"INSERT INTO Organisations (Name,OrgNumber,Address1,Address2,Address3,Address4,Town,PostCode,Unknown)values('{row[0].ToString()}'," +
+                               $"'{row[1].ToString()}','{row[2].ToString()}','{row[3].ToString()}'" +
+                               $",'{row[4].ToString()}','{row[5].ToString()}'," +
+                               $"'{row[6].ToString()}','{row[7].ToString()}','-')");
+                        }
+                        await _context.Database.ExecuteSqlRawAsync(query.ToString());
                     }
 
                 }

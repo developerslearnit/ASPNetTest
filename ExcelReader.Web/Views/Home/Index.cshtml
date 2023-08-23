@@ -16,7 +16,13 @@
     <div class="card-body">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#person" role="tab">People</a>
+                <a class="nav-link active" id="employee-tab" data-toggle="tab" href="#employee" role="tab">Employees</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="org-tab" data-toggle="tab" href="#orgs" role="tab">Organisation</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#person" role="tab">People</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#books" role="tab">Books</a>
@@ -26,7 +32,36 @@
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="person">
+            <div class="tab-pane fade show active" id="employee">
+                <table width="100%" id="employeeTable" class="table table-bordered">
+                    <thead>
+                        <tr class="fw-bolder fs-6 text-gray-800">
+                            <th>Org Number</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="orgs">
+                <table width="100%" id="orgsTable" class="table table-bordered">
+                    <thead>
+                        <tr class="fw-bolder fs-6 text-gray-800">
+                            <th>Org Number</th>
+                            <th>Name</th>
+                            <th>Address 1</th>
+                            <th>Address 2</th>
+                            <th>Address 3</th>
+                            <th>Address 4</th>
+                            <th>Town</th>
+                            <th>Post Code</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="person">
                 <table width="100%" id="personTable" class="table table-bordered">
                     <thead>
                         <tr class="fw-bolder fs-6 text-gray-800">
@@ -149,6 +184,57 @@
                     { "data": "description", "name": "description" }
                 ]
             });
+
+            var employeeTable = $("#employeeTable").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "ajax": {
+                    "url": '@Url.Action("ListAllEmployee", "home", new { area = "" })',
+                    "type": "POST",
+                    "datatype": "json",
+                    "headers": {
+                        //"X-XSRF-TOKEN": $("#_xsrfToken").val()
+                    }
+                },
+
+                "columns": [
+                    { "data": "orgNumber", "name": "schoolClass" },
+                    { "data": "firstName", "name": "firstName" },
+                    { "data": "lastName", "name": "lastName" }
+                ]
+            });
+
+            var orgsTable = $("#orgsTable").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "ajax": {
+                    "url": '@Url.Action("ListAllOrg", "home", new { area = "" })',
+                    "type": "POST",
+                    "datatype": "json",
+                    "headers": {
+                        //"X-XSRF-TOKEN": $("#_xsrfToken").val()
+                    }
+                },
+
+                "columns": [
+                    { "data": "orgNumber", "name": "schoolClass" },
+                    { "data": "name", "name": "name" },
+                    { "data": "address1", "name": "address1" },
+                    { "data": "address2", "name": "address2" },
+                    { "data": "address3", "name": "address3" },
+                    { "data": "address4", "name": "address4" },
+                    { "data": "town", "name": "town" },
+                    { "data": "postCode", "name": "postCode" }
+                ]
+            });
+
+
+
+            
 
             $(".dataTables_length").remove();
             $(".dataTables_filter").remove();

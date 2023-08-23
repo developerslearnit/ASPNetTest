@@ -10,5 +10,7 @@ namespace ExcelReader.Web.Repository
         IQueryable<Person> GetAllPersons();
         IQueryable<Book> GetAllBooks();
         IQueryable<School> GetAllSchools();
+        IQueryable<Employee> GetAllEmployees();
+        IQueryable<Organisation> GetAllOrganisations();
     }
 }

@@ -205,6 +205,64 @@ namespace ExcelReader.Web.Controllers
             });
         }
 
+        [HttpPost]
+        [Route("employees")]
+        public IActionResult ListAllEmployee()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            var query = _excelReader.GetAllEmployees();
+
+            recordsTotal = query.Count();
+
+            var recordList = query.OrderByDescending(x => x.Id)
+                .Skip(skip)
+                .Take(pageSize);
+
+            return Json(new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = recordList
+            });
+        }
+
+        [HttpPost]
+        [Route("org")]
+        public IActionResult ListAllOrg()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            var query = _excelReader.GetAllOrganisations();
+
+            recordsTotal = query.Count();
+
+            var recordList = query.OrderByDescending(x => x.Id)
+                .Skip(skip)
+                .Take(pageSize);
+
+            return Json(new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = recordList
+            });
+        }
+
 
     }
 }

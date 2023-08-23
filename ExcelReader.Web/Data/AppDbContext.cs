@@ -13,6 +13,8 @@ namespace ExcelReader.Web.Data
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<School> Schools { get; set; }
         public virtual DbSet<Book> Books { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<Organisation> Organisations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
