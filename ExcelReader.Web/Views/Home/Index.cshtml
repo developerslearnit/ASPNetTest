@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h3 class="display-6">VAULTEX TECHNICAL TEST </h3>
+</div>
+<div class="card">
+    <div class="card-header">
+      <div class="header-title"></div>
+        <div class="card-actions">
+            <button class="btn btn-secondary uploadBtn">Upload File</button>
+            <input style="position:absolute;right:-99999px" type="file" id="excelfile" />
+        </div>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#person" role="tab">People</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#books" role="tab">Books</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#schools" role="tab">Schools</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="person">
+                <table width="100%" id="personTable" class="table table-bordered">
+                    <thead>
+                        <tr class="fw-bolder fs-6 text-gray-800">
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Middle Name</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="books">
+                <table width="100%" id="booksTable" class="table table-bordered">
+                    <thead>
+                        <tr class="fw-bolder fs-6 text-gray-800">
+                            <th>CategoryId</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="schools">
+                <table width="100%" id="schoolsTable" class="table table-bordered">
+                    <thead>
+                        <tr class="fw-bolder fs-6 text-gray-800">
+                            <th>Class</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("a.nav-link").click(function(e){
+                e.preventDefault();
+                $("a.nav-link").removeClass("active");
+                $(this).addClass("active");
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+
+            });
+
+            var personTable = $("#personTable").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "ajax": {
+                    "url": '@Url.Action("ListAllPeople", "home", new { area = "" })',
+                    "type": "POST",
+                    "datatype": "json",
+                    "headers": {
+                        //"X-XSRF-TOKEN": $("#_xsrfToken").val()
+                    }
+                },
+
+                "columns": [
+                    { "data": "firstName", "name": "firstName" },
+                    { "data": "lastName", "name": "lastName" },
+                    { "data": "middleName", "name": "middleName" }
+
+                ]
+            });
+
+            var booksTable = $("#booksTable").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "ajax": {
+                    "url": '@Url.Action("ListAllBook", "home", new { area = "" })',
+                    "type": "POST",
+                    "datatype": "json",
+                    "headers": {
+                        //"X-XSRF-TOKEN": $("#_xsrfToken").val()
+                    }
+                },
+
+                "columns": [
+                    { "data": "categoryId", "name": "categoryId" },
+                    { "data": "name", "name": "name" },
+                    { "data": "description", "name": "description" }
+                ]
+            });
+
+            var schoolTable = $("#schoolsTable").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "ajax": {
+                    "url": '@Url.Action("ListAllSchool", "home", new { area = "" })',
+                    "type": "POST",
+                    "datatype": "json",
+                    "headers": {
+                        //"X-XSRF-TOKEN": $("#_xsrfToken").val()
+                    }
+                },
+
+                "columns": [
+                    { "data": "schoolClass", "name": "schoolClass" },
+                    { "data": "name", "name": "name" },
+                    { "data": "description", "name": "description" }
+                ]
+            });
+
+            $(".dataTables_length").remove();
+            $(".dataTables_filter").remove();
+
+            function postFile(data, url) {
+                return jQuery.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    contentType: false,
+                    processData: false,
+                    cache: false
+                });
+            }
+
+            $(".uploadBtn").click(function(){
+                $("#excelfile").click();
+            })
+
+            $("#excelfile").change(function (e) {
+                var frmData = new FormData();
+
+                var postUrl = "@Url.Action("UploadEntries","Home",new{area=""})";
+
+                frmData.append('xcelFile', e.target.files[0]);
+
+                $.when(postFile(frmData, postUrl)).then(function (response) {
+
+                    if(response.hasError==false){
+                        window.localtion.reload();
+                    }
+
+                })
+            });
+
+        });
+
+
+    </script>
+}
